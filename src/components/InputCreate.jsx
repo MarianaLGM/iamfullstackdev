@@ -4,44 +4,41 @@
 
 
 import {useState} from "react";
-import { Link } from "react-router-dom";
-
 
 function InputCreate() {
-    const [newTask, setNewTask] = useState('');  // Maneja el estado de la nueva tarea
-    const [tasks, setTasks] = useState([]);
-
-    // Este es el manejador para cuando el usuario escribe en el input
-    const handleChange = (e) => {
-        setNewTask(e.target.value);  // Actualiza el estado con el valor ingresado
-    };
+    const [payload, setPayload] = useState({title:""});
 
     const handleClick = (e) => {
-        e.preventDefault();
-        if (newTask.trim()) {
-          // Agregar la nueva tarea a la lista de tareas
-            setTasks((prevTasks) => [...prevTasks, newTask]);
-            setNewTask(''); // Limpiar el campo después de agregar la tarea
+        
+            fetch('http://localhost:3000/create', {
+                method: 'POST', // Método HTTP
+                headers: {
+                  'Content-Type': 'application/json', // Indicamos que el contenido es JSON
+                },
+                body: JSON.stringify(payload), // Convertimos el payload de JS a JSON
+            })
         }
+
+        console.log(payload)
+    
+    // Este es el manejador para cuando el usuario escribe en el input
+    const handleChange = (e) => {
+        setPayload({ title: e.target.value });  // Actualiza el estado con el valor ingresado
     };
+
 
     return (
         <>
         <h1>Lista Tareas React:</h1>
-        <form onSubmit={handleClick}>
+        <form>
                 <input 
                 type="text"
-                value={newTask}
+                value={payload.title}  
                 placeholder="Agregar nueva tarea"
                 onChange={handleChange}
                 />
-            <button type="submit">Agregar</button>
+            <button type="submit" onClick={handleClick}>Agregar</button>
         </form>
-        <ul>
-        {tasks.map((task, index) => (
-            <li key={index}>{task}</li>
-        ))}
-        </ul>
         </>
         )
 }
